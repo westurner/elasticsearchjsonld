@@ -14,6 +14,26 @@ import optparse
 import sys
 
 
+# http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-types.html
+# http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-core-types.html
+ESTYPE_JSONLDTYPE_MAP = {
+    'string': 'xsd:string',
+
+    'date': 'xsd:date',   # UTC
+
+    # number
+    'float': 'xsd:float',
+    'double': 'xsd:double',
+    'byte': 'xsd:byte',
+    'short': 'xsd:integer',
+    'long': 'xsd:integer',
+
+    'boolean': 'xsd:boolean',
+    'binary': 'xsd:base64Binary',
+    'attachment': 'xsd:base64Binary',
+}
+
+
 def walk_esjson_mappings(tree, context, depth=0, vocab=None):
     if hasattr(tree, 'items'):
         for key, value in tree.items():
@@ -30,7 +50,27 @@ def walk_esjson_mappings(tree, context, depth=0, vocab=None):
                 context[key] = collections.OrderedDict()
                 ctxt = context[key]
                 ctxt['@id'] = '%s%s' % (vocab or '', key)  # XXX
-                ctxt['@type'] = '@id'     # XXX
+
+                estype = value.get('type')
+                if estype == 'multi_field':
+                    esfieldtypes = []
+                    for key, value in value['fields'].items():
+                        esfieldtypes.append(value.get('type'))
+                    if len(set(esfieldtypes)) > 1:
+                        # TODO: pick the 'not_analyzed' copy?
+                        raise NotImplementedError(esfieldtypes)
+                    jsonldtype = ESTYPE_JSONLDTYPE_MAP.get(esfieldtypes[0])
+                else:
+                    jsonldtype = ESTYPE_JSONLDTYPE_MAP.get(estype)
+                    if jsonldtype is None:
+                        raise NotImplementedError("ElasticSearch %r type not yet implemented" % estype)
+                ctxt['@type'] = jsonldtype
+            # TODO: 'lists': http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-array-type.html
+            # TODO: type=object: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-object-type.html
+            # TODO: type=nested: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-nested-type.html
+            # TODO: type=ip: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-ip-type.html
+            # TODO: type=geo_point: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-point-type.html
+            # TODO: type=geo_shape: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html
     else:
         raise Exception("HERE")
 
