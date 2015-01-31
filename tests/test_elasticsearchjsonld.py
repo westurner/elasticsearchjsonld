@@ -40,8 +40,11 @@ class TestElasticsearchjsonld(unittest.TestCase):
             output=output)
         output.seek(0)
         print("OUTPUT\n=================")
-        print(output.read())
+        jsonstr = output.read()
+        print(jsonstr)
+        self.assertTrue(jsonstr)
 
+        # TODO: import PyLD // rdflib-jsonld and verify
         # XXX TODO: real assertions
 
     def test_02_esjson2jsonld(self):
@@ -64,9 +67,14 @@ class TestElasticsearchjsonld(unittest.TestCase):
                 output=output)
             output.seek(0)
             print("OUTPUT\n=================")
-            print(output.read())
-        # raise Exception()  # XXX: testing with ipdbplugin
+            jsonstr = output.read()
+            print(jsonstr)
+            self.assertTrue(jsonstr)
 
+            # TODO: import PyLD // rdflib-jsonld and verify
+            # XXX TODO: real assertions
+
+        # raise Exception()  # XXX: testing with ipdbplugin
 
     def tearDown(self):
         pass
