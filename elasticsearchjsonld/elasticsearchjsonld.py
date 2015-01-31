@@ -170,11 +170,10 @@ def main(args=None):
               file=sys.stderr)
 
     if opts.output_jsonld == '-':
-        with codecs.open(opts.output_jsonld, 'w', encoding='utf8') as output:
-            esjson2jsonld(opts.input_esjson,
-                        vocab=opts.vocab,
-                        default_vocab=opts.default_vocab,
-                        output=sys.stdout)
+        esjson2jsonld(opts.input_esjson,
+                    vocab=opts.vocab,
+                    default_vocab=opts.default_vocab,
+                    output=sys.stdout)
     else:
         with codecs.open(opts.output_jsonld, 'w', encoding='utf8') as output:
             esjson2jsonld(opts.input_esjson,
