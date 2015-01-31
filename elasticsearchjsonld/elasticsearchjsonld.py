@@ -11,14 +11,10 @@ import codecs
 import json
 import logging
 import optparse
-import pprint
 import sys
 
 
 def walk_esjson_mappings(tree, context, depth=0, vocab=None):
-    #print("=========")
-    #pprint.pprint(tree)
-    #print('---------')
     if hasattr(tree, 'items'):
         for key, value in tree.items():
             print(('  ' * depth, key, value and str(value)[0:20]))
@@ -29,8 +25,6 @@ def walk_esjson_mappings(tree, context, depth=0, vocab=None):
                 ctxt = context[key]
                 walk_esjson_mappings(value, ctxt, depth + 1)
             elif key == u'properties':
-                #context[key+'uhh'] = collections.OrderedDict()
-                #ctxt = context[key+'uhh']
                 walk_esjson_mappings(value, context, depth + 1)
             else:
                 context[key] = collections.OrderedDict()
