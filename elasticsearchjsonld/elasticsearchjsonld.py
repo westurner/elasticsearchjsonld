@@ -117,16 +117,34 @@ def esjson2jsonld(esjson, vocab=None, default_vocab=None, output=None):
 
 def main(args=None):
 
-    prs = optparse.OptionParser(usage="%prog : args")
+    prs = optparse.OptionParser(
+        usage="%prog -i <file.json> -o <file.jsonld> [opts]")
+
+    prs.add_option('-i', '--input',
+                   dest='input_esjson',
+                   action='store',
+                   help='ElasticSearch JSON mapping file to generate @context '
+                        'from')
+    prs.add_option('-o', '--output',
+                   dest='output_jsonld',
+                   action='store',
+                   help="Path to write JSON-LD output to ('-' for stdout)")
+
+    prs.add_option('--vocab',
+                   dest='vocab',
+                   action='store',
+                   help='Vocabulary URI prefix for terms')
+
+    prs.add_option('--default-vocab',
+                   dest='default_vocab',
+                   action='store',
+                   help='Default @vocab for the @context')
 
     prs.add_option('-v', '--verbose',
                    dest='verbose',
                    action='store_true',)
     prs.add_option('-q', '--quiet',
                    dest='quiet',
-                   action='store_true',)
-    prs.add_option('-t', '--test',
-                   dest='run_tests',
                    action='store_true',)
 
     if args is None:
@@ -139,13 +157,32 @@ def main(args=None):
         if opts.verbose:
             logging.getLogger().setLevel(logging.DEBUG)
 
-    if opts.run_tests:
-        import sys
-        sys.argv = [sys.argv[0]] + args
-        import unittest
-        exit(unittest.main())
+    if not opts.input_esjson:
+        prs.error("You must specify an -i/--input JSON file path")
+    if not opts.output_jsonld:
+        prs.error("You must specify an -i/--output JSON-LD file path")
 
-    esjson2jsonld()
+    if not opts.vocab or opts.default_vocab:
+        print("Neither --vocab nor --default-vocab were specified.",
+              file=sys.stderr)
+        print("Defaulting to %r" % "",
+              file=sys.stderr)
+
+    if opts.output_jsonld == '-':
+        with codecs.open(opts.output_jsonld, 'w', encoding='utf8') as output:
+            esjson2jsonld(opts.input_esjson,
+                        vocab=opts.vocab,
+                        default_vocab=opts.default_vocab,
+                        output=sys.stdout)
+    else:
+        with codecs.open(opts.output_jsonld, 'w', encoding='utf8') as output:
+            esjson2jsonld(opts.input_esjson,
+                        vocab=opts.vocab,
+                        default_vocab=opts.default_vocab,
+                        output=output)
+
+
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main(args=sys.argv))
