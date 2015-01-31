@@ -104,9 +104,10 @@ def esjson2jsonld(esjson, vocab=None, default_vocab=None, output=None):
     ctxt = context['@context']
 
     # define a default vocabulary
-    if default_vocab:
-        if default_vocab is not None:
-            ctxt['@vocab'] = default_vocab
+    if default_vocab is not None:
+        ctxt['@vocab'] = default_vocab
+
+    ctxt['xsd'] = "http://www.w3.org/2001/XMLSchema#"
 
     walk_esjson_mappings(value, ctxt, vocab=vocab)
 
