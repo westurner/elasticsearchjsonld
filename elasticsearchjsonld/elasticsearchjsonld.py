@@ -25,8 +25,8 @@ ESTYPE_JSONLDTYPE_MAP = {
     'float': 'xsd:float',
     'double': 'xsd:double',
     'byte': 'xsd:byte',
-    'short': 'xsd:integer',
-    'long': 'xsd:integer',
+    'short': 'xsd:short',
+    'long': 'xsd:long',
 
     'boolean': 'xsd:boolean',
     'binary': 'xsd:base64Binary',
