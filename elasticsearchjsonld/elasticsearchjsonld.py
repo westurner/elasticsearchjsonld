@@ -43,9 +43,9 @@ def walk_esjson_mappings(tree, context, depth=0, vocab=None):
             elif hasattr(value, 'items') and u'properties' in value:
                 context[key] = collections.OrderedDict()
                 ctxt = context[key]
-                walk_esjson_mappings(value, ctxt, depth + 1)
+                walk_esjson_mappings(value, ctxt, depth=depth + 1, vocab=vocab)
             elif key == u'properties':
-                walk_esjson_mappings(value, context, depth + 1)
+                walk_esjson_mappings(value, context, depth=depth + 1, vocab=vocab)
             else:
                 context[key] = collections.OrderedDict()
                 ctxt = context[key]
