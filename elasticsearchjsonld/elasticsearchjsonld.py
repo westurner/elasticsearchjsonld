@@ -13,6 +13,7 @@ import logging
 import optparse
 import sys
 
+log = logging.getLogger()
 
 # http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-types.html
 # http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-core-types.html
@@ -37,7 +38,7 @@ ESTYPE_JSONLDTYPE_MAP = {
 def walk_esjson_mappings(tree, context, depth=0, vocab=None):
     if hasattr(tree, 'items'):
         for key, value in tree.items():
-            print(('  ' * depth, key, value and str(value)[0:20]))
+            log.debug(str(('  ' * depth, key, value and str(value)[0:20])))
             if value is None:
                 continue
             elif hasattr(value, 'items') and u'properties' in value:
@@ -162,10 +163,10 @@ def main(args=None):
     if not opts.output_jsonld:
         prs.error("You must specify an -i/--output JSON-LD file path")
 
-    if not opts.vocab or opts.default_vocab:
-        print("Neither --vocab nor --default-vocab were specified.",
+    if not (opts.vocab or opts.default_vocab):
+        log.info("Neither --vocab nor --default-vocab were specified.",
               file=sys.stderr)
-        print("Defaulting to %r" % "",
+        log.info("Defaulting to %r" % "",
               file=sys.stderr)
 
     if opts.output_jsonld == '-':
