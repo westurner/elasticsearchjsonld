@@ -80,4 +80,5 @@ class TestElasticsearchjsonld(unittest.TestCase):
         pass
 
 if __name__ == '__main__':
-    unittest.main()
+    import sys
+    sys.exit(unittest.main())
